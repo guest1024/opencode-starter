@@ -229,6 +229,42 @@ Agent 行为:
 - **一个任务一个技能** — 不要同时加载多个无关技能
 - **明确指定退出** — 使用完后告诉 Agent 卸载技能
 
+### 4.4 技能加载验证
+
+**验证 superpowers 技能是否可用：**
+
+```bash
+# 方法一：通过 AI 对话验证（推荐）
+"列出所有可用的 superpowers 技能"
+
+# 方法二：直接测试加载（需要配置 skills.paths）
+skill(name="brainstorming")
+# 如果返回 "not found"，说明 skills.paths 未正确配置
+```
+
+**常见问题：**
+
+如果技能无法加载，检查：
+
+1. **`skills.paths` 是否配置**：查看 `~/.config/opencode/opencode.json` 是否包含：
+   ```json
+   {
+     "skills": {
+       "paths": [
+         "/home/user/.cache/opencode/packages/superpowers@git+https:/github.com/obra/superpowers.git/node_modules/superpowers/skills"
+       ]
+     }
+   }
+   ```
+
+2. **路径是否正确**：替换 `/home/user` 为你的实际 home 目录
+
+3. **是否重启 OpenCode**：配置修改后需要重启
+
+4. **superpowers 版本是否更新**：版本更新后路径中的 git hash 会变化，需要更新配置
+
+详见 [FAQ Q6.5](./faq.md#q65-superpowers-技能无法通过-skill-工具加载)。
+
 ---
 
 ## 5. Prompt 最佳实践

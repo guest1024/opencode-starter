@@ -84,6 +84,11 @@ mkdir -p ~/.config/opencode
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
+  "skills": {
+    "paths": [
+      "/home/user/.cache/opencode/packages/superpowers@git+https:/github.com/obra/superpowers.git/node_modules/superpowers/skills"
+    ]
+  },
   "plugin": [
     "superpowers@git+https://github.com/obra/superpowers.git",
     "oh-my-openagent@latest"
@@ -93,6 +98,16 @@ mkdir -p ~/.config/opencode
   }
 }
 ```
+
+> **⚠️ 关于 `skills.paths` 配置**：
+> 
+> 由于 OpenCode v1.14.x 的 `skill` 工具存在设计缺陷（不搜索插件通过 config hook 注册的路径），需要显式声明 `skills.paths` 才能让 superpowers 的 14 个技能（brainstorming, writing-plans 等）通过 `skill(name="...")` 按名加载。
+> 
+> - **路径说明**：`/home/user/.cache/opencode/packages/superpowers@git+https:/github.com/obra/superpowers.git/node_modules/superpowers/skills` 是 superpowers 插件安装后的实际路径。如果你的用户名不是 `user`，需要替换为实际的 home 目录路径。
+> - **版本更新注意**：superpowers 更新到新版本时，git hash 会变化，路径也会变化。届时需要手动更新此配置。
+> - **验证方法**：配置后重启 OpenCode，运行 `skill(name="brainstorming")` 应该能成功加载。
+> 
+> 详见 [FAQ Q6.5](./faq.md#q65-superpowers-技能无法通过-skill-工具加载)。
 
 ### 2.4 安装 oh-my-openagent
 

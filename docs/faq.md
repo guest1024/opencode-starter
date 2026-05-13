@@ -175,6 +175,95 @@ gh auth login
 
 ---
 
+### Q6.5: Superpowers 技能无法通过 `skill` 工具加载
+
+**症状**：
+
+```bash
+skill(name="brainstorming")
+# 返回: Skill or command "brainstorming" not found.
+```
+
+所有 superpowers 技能（brainstorming, writing-plans, systematic-debugging 等 14 个）都无法通过 `skill` 工具按名加载，但 AI 的系统提示中能看到这些技能。
+
+**根因**：
+
+OpenCode 的技能发现机制分为两层：
+
+1. **Prompt 构建层**：读取 `config.skills.paths`（包括插件通过 config hook 注册的路径），将技能元数据注入 AI 的 `available_skills` 上下文 → ✅ 工作正常
+2. **`skill` 工具层**：按名查找技能时，只搜索内置命令（playwright, frontend-ui-ux, git-master, review-work, ai-slop-remover + 10 个 slash 命令），不搜索 `config.skills.paths` → ❌ 找不到 superpowers 技能
+
+这是 **OpenCode v1.14.x `skill` 工具的设计缺陷**：插件通过 config hook 注册的路径（内存级修改）对 prompt 构建可见，但对 `skill` 工具不可见。
+
+**影响范围**：
+
+- ✅ **AI 不受影响**：所有 14 个 superpowers 技能已在系统提示中可见，AI 可以直接读取 SKILL.md 文件并遵循其指令
+- ❌ **用户交互受限**：无法通过 `skill(name="...")` 按需加载技能内容
+- ❌ **工具一致性问题**：技能发现与工具查找机制不一致
+
+**解决方案（Workaround）**：
+
+在 `~/.config/opencode/opencode.json` 中显式声明 `skills.paths`（持久化到磁盘，绕过插件 config hook）：
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "skills": {
+    "paths": [
+      "/home/user/.cache/opencode/packages/superpowers@git+https:/github.com/obra/superpowers.git/node_modules/superpowers/skills"
+    ]
+  },
+  "plugin": [
+    "superpowers@git+https://github.com/obra/superpowers.git",
+    "oh-my-openagent@latest"
+  ],
+  ...
+}
+```
+
+**注意事项**：
+
+1. **路径会随 superpowers 版本变化**：如果 superpowers 更新到新版本（如从 v5.1.0 到 v5.2.0），git hash 会变，缓存路径也会变。需要手动更新 `skills.paths`。
+2. **需要重启 OpenCode**：修改 opencode.json 后必须重启才能生效。
+3. **验证方法**：重启后运行 `skill(name="brainstorming")`，应该能成功加载。
+
+**更优雅的方案探讨**：
+
+| 方案 | 优点 | 缺点 | 可行性 |
+|------|------|------|--------|
+| **当前 workaround**（显式 skills.paths） | 简单直接，立即生效 | 路径硬编码，版本更新需手动维护 | ✅ 已实施 |
+| **修复 OpenCode `skill` 工具** | 根本解决，插件机制完整 | 需要等待上游修复 | ⏳ 需提 issue |
+| **项目级 opencode.json** | 便携性好，不污染全局配置 | 每个项目都要配置 | ✅ 可选方案 |
+| **符号链接到标准路径** | 路径固定 | superpowers 已废弃此方案 | ❌ 不推荐 |
+| **插件直接写入 opencode.json** | 自动化 | 违反插件边界，可能冲突 | ❌ 架构不当 |
+
+**推荐行动**：
+
+1. **短期**：使用当前 workaround（已应用）
+2. **中期**：向 OpenCode 提交 issue，要求 `skill` 工具支持搜索 `config.skills.paths`
+3. **长期**：等待 OpenCode 修复后移除 workaround
+
+**相关 Issue 模板**（供提交给 OpenCode）：
+
+```markdown
+**Bug**: `skill` tool doesn't search plugin-registered `config.skills.paths`
+
+**Environment**: OpenCode v1.14.46
+
+**Steps to reproduce**:
+1. Install superpowers plugin via `"plugin": ["superpowers@git+https://github.com/obra/superpowers.git"]`
+2. Verify skills appear in AI's `available_skills` context
+3. Try `skill(name="brainstorming")` → returns "not found"
+
+**Expected**: `skill` tool should search paths registered by plugins via config hook
+
+**Actual**: `skill` tool only searches builtin commands
+
+**Workaround**: Manually add `skills.paths` to opencode.json
+```
+
+---
+
 ## 3. 功能/使用相关
 
 ### Q7: ultrawork 不生效 / Sisyphus Agent 不响应
