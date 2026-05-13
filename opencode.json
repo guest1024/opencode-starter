@@ -1,0 +1,6 @@
+{
+  "plugin": [
+    "opencode-lisa"
+  ],
+  "$schema": "https://opencode.ai/config.json"
+}
