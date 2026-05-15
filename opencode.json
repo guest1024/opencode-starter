@@ -1,6 +1,49 @@
 {
+  "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    "opencode-lisa"
+    "superpowers@git+https://github.com/obra/superpowers.git",
+    "oh-my-openagent@latest"
   ],
-  "$schema": "https://opencode.ai/config.json"
+  "provider": {
+    "my-new-api": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "new-api",
+      "options": {
+        "baseURL": "https://ykhelsrdmyua.usw-1.sealos.app/",
+        "apiKey": "sk-XPBJQH4ANvjFA4YArxzLjQAFyqMqXCCRecjLA9KEWtzPBJzD"
+      },
+      "models": {
+        "claude-sonnet-4-6": {
+          "name": "Claude Sonnet 4.6",
+          "structuredOutputs": false
+        },
+        "claude-sonnet-4-5": {
+          "name": "Claude Sonnet 4.5",
+          "structuredOutputs": false
+        },
+        "claude-opus-4-6": {
+          "name": "Claude Opus 4.6",
+          "structuredOutputs": false
+        }
+      }
+    },
+    "aiapis": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "aiapis-OpenAI",
+      "options": {
+        "baseURL": "https://aiapis.help/v1",
+        "apiKey": "sk-GlEnjnf09lXwiJuwDS5Q0nOzGd1ck8YBDERVXv84t9hvtS0U"
+      },
+      "models": {
+        "gpt-5.4": {
+          "name": "GPT 5.4",
+          "structuredOutputs": false
+        },
+        "gpt-5.5": {
+          "name": "GPT 5.5",
+          "structuredOutputs": false
+        }
+      }
+    }
+  }
 }

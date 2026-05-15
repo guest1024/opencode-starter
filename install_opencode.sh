@@ -12,7 +12,7 @@ curl -sSLk https://unofficial-builds.nodejs.org/download/release/v22.22.2/node-v
 
 npm i -g opencode-ai --registry https://mirrors.cloud.tencent.com/npm/
 
-ln -sf  /usr/local/node-v22.22.2-linux-x64-glibc-217/bin/npm  /usr/bin/opencode 
+ln -sf  /usr/local/node-v22.22.2-linux-x64-glibc-217/bin/opencode  /usr/bin/opencode 
 
 # 安装 Bun
 curl -fsSL https://bun.sh/install | bash
@@ -23,7 +23,7 @@ source ~/.zshrc  # 或 exec /usr/bin/zsh
 # 验证安装
 bun --version
 
-npm i -g opencode-ai --registry https://mirrors.cloud.tencent.com/npm/
+# npm i -g opencode-ai --registry https://mirrors.cloud.tencent.com/npm/
 
  # cp -r ./container/helix-config /root/.config/helix
 
