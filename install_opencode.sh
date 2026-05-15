@@ -10,9 +10,12 @@ curl -sSLk https://unofficial-builds.nodejs.org/download/release/v22.22.2/node-v
     ln -sf /usr/local/node-v22.22.2-linux-x64-glibc-217/bin/npm /usr/local/bin/npm && \
     rm -rf /node-v22.22.2-linux-x64-glibc-217.tar.gz
 
-npm i -g opencode-ai --registry https://mirrors.cloud.tencent.com/npm/
+
+npm install -g opencode-ai --registry https://mirrors.cloud.tencent.com/npm/
+npm install -g @tencent-ai/codebuddy-code --registry https://mirrors.cloud.tencent.com/npm/
 
 ln -sf  /usr/local/node-v22.22.2-linux-x64-glibc-217/bin/opencode  /usr/bin/opencode 
+ln -sf  /usr/local/node-v22.22.2-linux-x64-glibc-217/bin/codebuddy  /usr/bin/cb 
 
 # 安装 Bun
 curl -fsSL https://bun.sh/install | bash
